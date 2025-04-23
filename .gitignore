@@ -3,3 +3,6 @@ front/
 
 # Ignore virtual environment in backend
 back/env/
+
+*.sql
+*.pdf
