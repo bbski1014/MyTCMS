@@ -1,0 +1,5 @@
+# Ignore frontend directory
+front/
+
+# Ignore virtual environment in backend
+back/env/
