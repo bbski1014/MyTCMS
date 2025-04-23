@@ -1,0 +1,69 @@
+-- pgloader command file: mysql_to_pgsql.load
+-- Migrates data from MySQL tcms_db to PostgreSQL tcms_db
+-- Assumes PostgreSQL schema is already created by 'python manage.py migrate'
+
+LOAD DATABASE
+     -- Make sure MySQL connection details are correct
+     FROM mysql://root:123456@localhost:3306/tcms_db
+     -- Make sure PostgreSQL connection details are correct
+     INTO postgresql://tcms_user:20021231@localhost:5432/tcms_db
+
+WITH
+     -- === Basic Options ===
+     data only,
+     workers = 8,
+     batch size = 1MB,
+     prefetch rows = 1000,
+
+     -- === MySQL Specific Options ===
+     mysql session variables = 'character_set_server=utf8mb4, character_set_database=utf8mb4, character_set_client=utf8mb4, character_set_connection=utf8mb4, character_set_results=utf8mb4',
+
+     -- === Type Casting and Data Handling ===
+     CAST type datetime to timestamptz drop default drop not null using zero-dates-to-null,
+          type date drop default drop not null using zero-dates-to-null,
+
+     -- === Table Exclusion ===
+     EXCLUDING TABLE NAMES MATCHING 'django_migrations', 'django_content_type', 'django_session',
+
+     -- === Error Handling ===
+     on error stop
+
+
+-- === Reset Sequences After Load ===
+-- Ensures primary key sequences are correctly set after data insertion.
+-- IMPORTANT: Verify ALL table and column names ('id' assumed) are correct for your schema.
+AFTER LOAD DO
+ $$ -- Reset sequences for Django managed tables and custom apps
+    -- Django Auth tables
+    SELECT setval(pg_get_serial_sequence('auth_user', 'id'), coalesce(max(id), 1), max(id) IS NOT null) FROM auth_user; $$,
+ $$ SELECT setval(pg_get_serial_sequence('auth_group', 'id'), coalesce(max(id), 1), max(id) IS NOT null) FROM auth_group; $$,
+ $$ SELECT setval(pg_get_serial_sequence('auth_permission', 'id'), coalesce(max(id), 1), max(id) IS NOT null) FROM auth_permission; $$,
+ $$ SELECT setval(pg_get_serial_sequence('django_admin_log', 'id'), coalesce(max(id), 1), max(id) IS NOT null) FROM django_admin_log; $$,
+
+ $$ -- users app
+    -- Removed setval for users_userprofile as user_id is not a sequence
+ $$ SELECT setval(pg_get_serial_sequence('users_userskill', 'id'), coalesce(max(id), 1), max(id) IS NOT null) FROM users_userskill; $$,
+ $$ SELECT setval(pg_get_serial_sequence('users_skill', 'id'), coalesce(max(id), 1), max(id) IS NOT null) FROM users_skill; $$,
+ $$ SELECT setval(pg_get_serial_sequence('users_skilltype', 'id'), coalesce(max(id), 1), max(id) IS NOT null) FROM users_skilltype; $$,
+ $$ SELECT setval(pg_get_serial_sequence('users_userrating', 'id'), coalesce(max(id), 1), max(id) IS NOT null) FROM users_userrating; $$,
+ $$ SELECT setval(pg_get_serial_sequence('users_userreward', 'id'), coalesce(max(id), 1), max(id) IS NOT null) FROM users_userreward; $$,
+ $$ SELECT setval(pg_get_serial_sequence('users_exchangerecord', 'id'), coalesce(max(id), 1), max(id) IS NOT null) FROM users_exchangerecord; $$,
+ $$ SELECT setval(pg_get_serial_sequence('users_device', 'id'), coalesce(max(id), 1), max(id) IS NOT null) FROM users_device; $$,
+ $$ SELECT setval(pg_get_serial_sequence('users_devicetype', 'id'), coalesce(max(id), 1), max(id) IS NOT null) FROM users_devicetype; $$,
+
+ $$ -- projects app
+    SELECT setval(pg_get_serial_sequence('projects_project', 'id'), coalesce(max(id), 1), max(id) IS NOT null) FROM projects_project; $$,
+ $$ SELECT setval(pg_get_serial_sequence('projects_projecttag', 'id'), coalesce(max(id), 1), max(id) IS NOT null) FROM projects_projecttag; $$,
+ $$ SELECT setval(pg_get_serial_sequence('projects_module', 'id'), coalesce(max(id), 1), max(id) IS NOT null) FROM projects_module; $$,
+ $$ SELECT setval(pg_get_serial_sequence('projects_projectmember', 'id'), coalesce(max(id), 1), max(id) IS NOT null) FROM projects_projectmember; $$,
+ $$ SELECT setval(pg_get_serial_sequence('projects_milestone', 'id'), coalesce(max(id), 1), max(id) IS NOT null) FROM projects_milestone; $$,
+
+ $$ -- testcases app
+    SELECT setval(pg_get_serial_sequence('testcases_testcase', 'id'), coalesce(max(id), 1), max(id) IS NOT null) FROM testcases_testcase; $$,
+ $$ SELECT setval(pg_get_serial_sequence('testcases_tag', 'id'), coalesce(max(id), 1), max(id) IS NOT null) FROM testcases_tag; $$,
+ $$ SELECT setval(pg_get_serial_sequence('testcases_teststep', 'id'), coalesce(max(id), 1), max(id) IS NOT null) FROM testcases_teststep; $$,
+
+
+
+ $$ -- Add other tables with auto-incrementing IDs here...
+;

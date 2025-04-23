@@ -1,0 +1,37 @@
+# /mnt/d/project/TCMS/docker-compose.yml
+# 包含 PostgreSQL 和 Redis 服务
+
+services:
+  db:
+    # image: postgres:16 # 或 postgres:15 # <--- Comment out or remove this line
+    build: .                       # <--- Add this line
+    container_name: tcms_postgres_db
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    ports:
+      # 保持这个端口映射，以便你的本地后端应用可以连接
+      - "5432:5432"
+    # networks: # 如果没有其他容器需要连接，网络可以省略
+    #   - tcms_network
+    restart: unless-stopped
+
+  redis:                       # <--- 新增 Redis 服务
+    image: "redis:alpine"      # 使用 alpine 镜像
+    container_name: redis_service # 容器名
+    ports:
+      - "6379:6379"           # 映射端口
+    volumes:
+      - redis_data:/data      # 数据持久化
+    restart: always            # 自动重启
+
+volumes:
+  pgdata:
+  redis_data:                  # <--- 新增 Redis 数据卷
+
+# networks: # 如果没有其他容器需要连接，网络可以省略
+#   tcms_network:
+#     driver: bridge

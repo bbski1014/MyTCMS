@@ -1,0 +1,839 @@
+# TCMS (Test Case Management System) 关键词
+
+## 核心功能
+- 测试用例管理
+- 测试计划管理
+- 测试执行
+- 测试报告生成
+- 测试指标分析
+- 缺陷跟踪
+- 测试套件管理
+- 用例版本控制
+- 用例智能去重
+- 过时用例检测
+- 用例可视化分析
+
+## 技术框架
+前端：
+- Vue 3
+- Vite
+- Element Plus
+- JavaScript
+- Vue Router
+- Axios
+- ECharts（数据可视化）
+
+后端：
+- Django
+- Django REST framework（同步处理，必要时才使用异步处理）
+- MySQL
+- Conda
+- Swagger/drf-yasg
+- scikit-learn（相似度分析）
+- jieba（中文分词）
+- pandas（数据处理）
+
+部署：
+- Nginx（前端部署）
+- Docker（后端容器化）
+- Docker Compose（容器编排）
+- Gunicorn（WSGI服务器）
+
+## 系统模块
+- 用户管理
+- 权限控制
+- 测试用例库
+- 测试计划管理
+- 测试执行管理
+- 报告生成
+- 数据分析
+- 用例版本管理
+- AI智能分析
+- 可视化报表
+
+## 测试指标
+- 测试覆盖率
+- 缺陷密度
+- 测试执行效率
+- 质量度量
+- 性能指标
+- 用例重复率
+- 用例时效性
+- 执行趋势分析
+
+## 部署架构
+- 前端Nginx反向代理
+- 后端Docker容器化
+- 数据库持久化存储
+- 静态资源管理
+- 日志收集
+
+## 处理方式
+- 同步处理接口请求
+- 数据库CRUD操作
+- 短连接通信
+- 轮询获取长任务结果
+
+## AI功能
+- 用例相似度分析
+- 智能去重建议
+- 过时用例检测
+- 合并优化策略
+- 智能报告分析
+
+## 可视化功能
+- ECharts图表展示
+- 多维度数据分析
+- 交互式数据探索
+- 趋势分析图表
+- 分布统计图表
+- 覆盖率热力图
+- 模块分布树图
+
+## 测试用例类型
+- 接口测试用例
+- UI测试用例
+- 单元测试用例
+- 性能测试用例
+- 移动测试用例
+
+
+
+## 支持的测试框架
+- Pytest（Python单元测试）
+- Selenium（UI自动化）
+- Requests（接口测试）
+- Postman（API测试）
+- JMeter（性能测试）
+- Cypress（现代Web测试） 
+
+## 支持的测试框架
+Python框架：
+- Pytest（单元测试框架）
+- Robot Framework（自动化测试框架）
+- Behave（BDD测试框架）
+
+Java框架：
+- JUnit（单元测试框架）
+- TestNG（测试框架）
+- Cucumber-JVM（BDD测试框架）
+
+C++框架：
+- Google Test（单元测试框架）
+- Catch2（现代C++测试框架）
+
+自动化测试框架：
+- Selenium（Web UI自动化）
+- Appium（移动端自动化）
+- REST Assured（API测试）
+
+
+## 移动端UI测试记录
+测试用例组成：
+- 基础信息记录（用例ID、名称、描述、优先级）
+- UI元素信息（元素名称、类型、属性）
+- 元素定位方式（ID、XPath、AccessibilityID等）
+- 操作步骤描述（点击、滑动、输入等）
+- 测试数据（输入值、验证值）
+- 预期结果（状态、显示内容）
+
+图片记录类型：
+- 页面截图（完整页面状态）
+- UI元素截图（具体操作元素）
+- 操作步骤截图（操作过程记录）
+- 预期结果截图（正确状态参考）
+- 实际结果截图（执行后状态）
+- 错误状态截图（异常情况记录）
+
+图片存储管理：
+- 图片压缩存储（优化存储空间）
+- 分类存储目录（按用例/日期/类型）
+- 版本关联存储（与用例版本对应）
+- 快速检索支持（标签/特征检索）
+- 图片对比功能（预期vs实际）
+
+## 图像用例处理方案
+文本处理：
+- Jieba分词处理
+- TF-IDF向量化
+- 词性过滤（动词和名词）
+- 停用词过滤
+- 文本距离计算（DT）
+
+图像处理：
+- SPM空间金字塔匹配
+- SIFT特征提取
+- 图像归一化
+- 特征直方图生成
+- 图像距离计算（DS）
+
+平衡距离计算：
+- 文本与图像特征融合
+- 动态权重调整（α和β参数）
+- 调和均值计算
+- 距离矩阵生成
+
+聚类处理：
+- 层次凝聚聚类（HAC）
+- 平均链接计算
+- 动态阈值控制
+- 增量式处理
+- 分批聚类优化
+
+处理流程：
+- 文本特征提取
+- 图像特征提取
+- 距离计算融合
+- 相似度聚类
+- 结果可视化
+
+技术实现：
+- OpenCV（图像处理）
+- scikit-learn（机器学习）
+- numpy（数值计算）
+- PIL（图像基础操作）
+- threading（异步处理）
+
+## NLP用例库合并优化
+文本预处理：
+- jieba分词和词性标注
+- 停用词过滤
+- 标点符号处理
+- 数字标准化
+- 特殊字符处理
+
+相似度计算：
+- TF-IDF向量化
+- Word2Vec词嵌入
+- 余弦相似度
+- 编辑距离算法
+- 语义相似度计算
+
+用例聚类：
+- K-means聚类
+- 层次聚类
+- DBSCAN密度聚类
+- 相似度阈值控制
+- 聚类结果优化
+
+合并策略：
+- 保留完整度高的用例
+- 合并补充信息
+- 保留历史版本
+- 冲突解决机制
+- 自动化合并建议
+
+优化技术：
+- 中文分词优化
+- 领域词典构建
+- 同义词处理
+- 关键信息提取
+- 上下文理解
+
+应用场景：
+- 重复用例检测
+- 相似用例合并
+- 用例分类整理
+- 冗余信息清理
+- 用例库优化
+
+实现工具：
+- jieba（分词）
+- gensim（词向量）
+- scikit-learn（聚类）
+- nltk（文本处理）
+- synonyms（同义词）
+
+## 富文本编辑器
+编辑器选择：
+- Wangeditor（Vue3版本）
+  - 轻量级
+  - 中文友好
+  - Vue3支持
+  - Element Plus集成
+  - 配置简单
+
+基础功能：
+- 文本编辑
+- 图片管理
+- 表格编辑
+- 代码高亮
+- 快捷键支持
+
+测试用例功能：
+- 步骤模板
+- 预期结果模板
+- 测试数据格式化
+- 状态标记
+- 历史记录
+
+数据处理：
+- 自动保存
+- 图片上传
+- 内容校验
+- 版本控制
+- 草稿保存
+
+## 用例记录方案
+前端编辑器：
+- Wangeditor（Vue3版本）
+  - 基础文本编辑
+  - 图片上传处理
+  - 表格编辑支持
+  - 快捷键操作
+  - 自动保存
+
+用例记录结构：
+- 基本信息
+  - 用例标题
+  - 用例描述
+  - 优先级
+  - 所属模块
+  - 创建人
+
+- 测试步骤
+  - 前置条件
+  - 操作步骤
+  - 预期结果
+  - 测试数据
+  - 备注说明
+
+- 关联信息
+  - 测试环境
+  - 测试工具
+  - 依赖用例
+  - 标签分类
+  - 执行历史
+
+数据存储：
+- 结构化数据（MySQL）
+  - 用例基本信息
+  - 分类标签
+  - 关联关系
+  - 执行记录
+  - 版本信息
+
+- 富文本内容
+  - HTML格式存储
+  - 图片单独存储
+  - 历史版本
+  - 草稿记录
+  - 变更记录
+
+用例模板：
+- 功能测试模板
+- 接口测试模板
+- UI测试模板
+- 性能测试模板
+- 自定义模板
+
+数据处理：
+- 内容验证
+- 格式转换
+- 关键词提取
+- 自动分类
+- 智能推荐
+
+## 项目用例库管理
+项目管理：
+- 项目基础信息
+  - 项目名称
+  - 项目描述
+  - 项目状态
+  - 负责人
+  - 创建时间
+
+- 项目配置
+  - 环境配置
+  - 分支管理
+  - 版本规划
+  - 权限设置
+  - CI/CD配置
+
+用例库管理：
+- 用例库分类
+  - 项目专属用例
+  - 公共用例库
+  - 模板用例库
+  - 历史用例库
+  - 回归测试集
+
+- 用例版本控制
+  - 关联代码版本
+  - 用例版本号
+  - 变更记录
+  - 回滚机制
+  - 分支管理
+
+回归测试管理：
+- 测试集配置
+  - 场景划分
+  - 优先级设置
+  - 执行策略
+  - 自动化标记
+  - 依赖关系
+
+- 执行计划
+  - 定时执行
+  - 触发条件
+  - 执行顺序
+  - 并行策略
+  - 失败处理
+
+CI/CD集成：
+- 触发机制
+  - 代码提交
+  - 版本发布
+  - 定时触发
+  - 手动触发
+  - 条件触发
+
+- 执行流程
+  - 环境准备
+  - 用例筛选
+  - 执行测试
+  - 结果分析
+  - 报告生成
+
+数据同步：
+- 版本同步
+  - 代码版本
+  - 用例版本
+  - 环境版本
+  - 数据版本
+  - 配置同步
+
+- 结果追踪
+  - 执行记录
+  - 失败分析
+  - 修复验证
+  - 趋势分析
+  - 质量度量
+
+权限控制：
+- 项目权限
+  - 项目管理员
+  - 测试负责人
+  - 开发人员
+  - 执行人员
+  - 访客权限
+
+- 用例权限
+  - 创建权限
+  - 编辑权限
+  - 执行权限
+  - 查看权限
+  - 导出权限
+
+## 数据同步方案（MySQL）
+数据表设计：
+- 项目表（projects）
+  - 项目基本信息
+  - 项目状态
+  - 创建时间
+  - 更新时间
+  - 负责人
+
+- 用例表（test_cases）
+  - 用例基本信息
+  - 所属项目
+  - 版本号
+  - 修改记录
+  - 执行状态
+
+- 执行记录表（execution_records）
+  - 执行结果
+  - 执行时间
+  - 执行人
+  - 关联用例
+  - 测试环境
+
+- 版本记录表（version_history）
+  - 版本信息
+  - 变更内容
+  - 变更时间
+  - 操作人
+  - 备注说明
+
+同步处理：
+- 数据更新
+  - 时间戳记录
+  - 版本号更新
+  - 状态变更
+  - 结果记录
+  - 历史保存
+
+## 权限控制方案（DRF RBAC）
+角色设计：
+- 超级管理员（superuser）
+  - 系统配置权限
+  - 用户管理权限
+  - 所有数据权限
+  - 角色管理权限
+  - 日志查看权限
+
+- 项目管理员（project_admin）
+  - 项目配置权限
+  - 项目用户管理
+  - 项目数据管理
+  - 测试计划管理
+  - 报告管理权限
+
+- 测试人员（tester）
+  - 用例编写权限
+  - 用例执行权限
+  - 结果记录权限
+  - 报告查看权限
+  - 基础数据权限
+
+- 开发人员（developer）
+  - 用例查看权限
+  - 结果查看权限
+  - 报告查看权限
+  - 评论权限
+  - 基础访问权限
+
+权限实现：
+- DRF权限类
+  - IsAuthenticated
+  - IsAdminUser
+  - DjangoModelPermissions
+  - CustomProjectPermissions
+  - ObjectLevelPermissions
+
+- 权限控制粒度
+  - 模型级权限
+  - 对象级权限
+  - 字段级权限
+  - 操作级权限
+  - 数据过滤权限
+
+## 数据库设计
+```mermaid
+erDiagram
+    %% 用户和权限相关
+    User ||--o{ UserRole : has
+    Role ||--o{ UserRole : has
+    Role ||--o{ Permission : contains
+
+    %% 项目相关
+    Project ||--o{ ProjectMember : has
+    Project ||--o{ TestSuite : contains
+    Project ||--o{ TestCase : contains
+    
+    %% 测试用例相关
+    TestSuite ||--o{ TestCase : contains
+    TestCase ||--o{ TestStep : contains
+    TestCase ||--o{ TestExecution : has
+    TestCase ||--o{ TestCaseVersion : has
+    TestCase ||--o{ TestCaseAttachment : has
+    
+    %% 执行相关
+    TestExecution ||--o{ ExecutionResult : has
+    TestExecution ||--o{ ExecutionAttachment : has
+    
+    User {
+        int id PK
+        string username
+        string password_hash
+        string email
+        datetime created_at
+        boolean is_active
+    }
+    
+    Role {
+        int id PK
+        string name
+        string description
+        datetime created_at
+    }
+    
+    Permission {
+        int id PK
+        string name
+        string codename
+    }
+    
+    Project {
+        int id PK
+        string name
+        string description
+        string status
+        datetime created_at
+        datetime updated_at
+        int creator_id FK
+    }
+    
+    ProjectMember {
+        int id PK
+        int project_id FK
+        int user_id FK
+        string role
+        datetime joined_at
+    }
+    
+    TestSuite {
+        int id PK
+        string name
+        string description
+        int project_id FK
+        int parent_id FK
+        datetime created_at
+    }
+    
+    TestCase {
+        int id PK
+        string title
+        text description
+        string priority
+        string type
+        int project_id FK
+        int suite_id FK
+        int creator_id FK
+        datetime created_at
+        datetime updated_at
+        string status
+        int current_version
+    }
+    
+    TestStep {
+        int id PK
+        int case_id FK
+        int order
+        text action
+        text expected_result
+        text test_data
+    }
+    
+    TestCaseVersion {
+        int id PK
+        int case_id FK
+        int version
+        text content
+        datetime created_at
+        int creator_id FK
+    }
+    
+    TestExecution {
+        int id PK
+        int case_id FK
+        int executor_id FK
+        datetime start_time
+        datetime end_time
+        string status
+        string environment
+        text actual_result
+    }
+    
+    ExecutionResult {
+        int id PK
+        int execution_id FK
+        string status
+        text notes
+        datetime created_at
+    }
+    
+    TestCaseAttachment {
+        int id PK
+        int case_id FK
+        string file_path
+        string file_type
+        datetime uploaded_at
+        int uploader_id FK
+    }
+    
+    ExecutionAttachment {
+        int id PK
+        int execution_id FK
+        string file_path
+        string file_type
+        datetime uploaded_at
+        int uploader_id FK
+    }
+```
+
+## TestSuite说明
+功能定位：
+- 用例分类管理
+- 树形结构组织
+- 模块化管理
+- 批量执行单元
+- 权限控制单元
+
+组织结构：
+- 项目层
+  - 功能模块A
+    - 子模块A1
+    - 子模块A2
+  - 功能模块B
+    - 子模块B1
+    - 子模块B2
+
+应用场景：
+- 按功能分类
+  - 登录模块
+  - 用户管理
+  - 权限管理
+  - 报表模块
+
+- 按测试类型
+  - 功能测试
+  - 接口测试
+  - UI测试
+  - 性能测试
+
+- 按优先级
+  - 冒烟测试集
+  - 回归测试集
+  - 全量测试集
+  - 自动化测试集
+
+使用优势：
+- 结构清晰
+- 便于管理
+- 批量操作
+- 权限隔离
+- 执行追踪
+
+## 众包测试机制
+### 核心功能
+- 众包任务管理
+- 测试者管理
+- 结果评估
+- 奖励机制
+- 质量监控
+
+### 数据库设计
+- 众包任务表（crowd_test_tasks）
+  - 任务基本信息
+  - 关联用例信息
+  - 任务状态
+  - 截止时间
+  - 奖励信息
+
+- 众包测试者表（crowd_testers）
+  - 用户关联
+  - 等级信息
+  - 经验积分
+  - 完成率
+  - 任务统计
+
+- 众包结果表（crowd_test_results）
+  - 测试结果
+  - 评分信息
+  - 提交时间
+  - 审核状态
+  - 奖励发放
+
+### 用例库扩展
+- 众包测试属性
+  - 是否支持众包
+  - 奖励积分
+  - 测试者等级要求
+  - 最大测试者数
+  - 截止时间
+
+- 众包测试模板
+  - 简化测试步骤
+  - 验收标准
+  - 环境说明
+  - 数据准备
+  - 提交格式
+
+### 评估机制
+- 质量评分（40%）
+- 时效性评分（20%）
+- 问题发现评分（20%）
+- 文档完整性评分（20%）
+- 综合评分计算
+
+### 权限控制
+- 众包测试管理员
+  - 任务发布权限
+  - 结果审核权限
+  - 奖励发放权限
+  - 测试者管理权限
+
+- 众包测试者
+  - 任务浏览权限
+  - 任务认领权限
+  - 结果提交权限
+  - 个人中心权限
+
+### 数据同步
+- 任务状态同步
+  - 发布状态
+  - 认领状态
+  - 完成状态
+  - 审核状态
+
+- 结果同步
+  - 提交记录
+  - 评分记录
+  - 奖励记录
+
+### 技术实现
+- 任务分配算法
+- 评分计算系统
+- 奖励发放机制
+- 质量监控系统
+- 数据统计分析
+
+### 前端设计
+- 任务广场页面
+  - 任务列表展示
+  - 任务筛选功能
+  - 任务详情查看
+  - 任务申请入口
+  - 任务状态追踪
+
+- 个人中心页面
+  - 个人信息展示
+  - 任务统计信息
+  - 进行中的任务
+  - 历史任务记录
+  - 积分/等级展示
+
+- 任务详情页面
+  - 任务基本信息
+  - 测试用例详情
+  - 环境要求说明
+  - 提交结果表单
+  - 结果审核状态
+
+- 结果提交页面
+  - 富文本编辑器
+  - 文件上传组件
+  - 问题报告表单
+  - 截图上传功能
+  - 提交预览功能
+
+- 管理后台页面
+  - 任务发布表单
+  - 测试者管理
+  - 结果审核界面
+  - 奖励发放管理
+  - 数据统计分析
+
+- 组件设计
+  - 任务卡片组件
+  - 结果提交表单
+  - 评分展示组件
+  - 进度追踪组件
+  - 通知提醒组件
+
+- 交互设计
+  - 任务申请流程
+  - 结果提交流程
+  - 审核反馈流程
+  - 奖励发放流程
+  - 消息通知机制
+
+- 数据可视化
+  - 任务完成统计
+  - 测试者活跃度
+  - 质量评分趋势
+  - 奖励发放统计
+  - 问题类型分布
+
+

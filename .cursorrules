@@ -1,0 +1,27 @@
+{
+    "project_name": "TCMS",
+    "tech_stack": {
+        "frontend": {
+            "framework": "Vue 3",
+            "build_tool": "Vite",
+            "ui_library": "Element Plus",
+            "router": "Vue Router",
+            "http_client": "Axios",
+            "language": "JavaScript"
+        },
+        "backend": {
+            "framework": "Django",
+            "api_framework": "Django REST framework",
+            "database": "MySQL",
+            "virtual_env": "Conda",
+            "api_doc": "drf-yasg",
+            "processing": "synchronous"
+        },
+        "deployment": {
+            "frontend_server": "Nginx",
+            "backend_container": "Docker",
+            "container_orchestration": "Docker Compose",
+            "wsgi_server": "Gunicorn"
+        }
+    }
+} 
