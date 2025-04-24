@@ -3,6 +3,7 @@
 import random
 import time
 import datetime
+import json # 导入 json 库
 from django.core.management.base import BaseCommand, CommandError
 from django.contrib.auth import get_user_model
 from django.db import transaction, IntegrityError # Import IntegrityError
@@ -192,26 +193,36 @@ class Command(BaseCommand):
 
         # --- 3. 批量生成 TestCaseVersion ---
         test_case_versions_to_create = []
-        for test_case in created_test_cases: # 使用已创建并带有 ID 的 TestCase 对象
+        for test_case in created_test_cases:
             scenario = random.choice(SCENARIOS)
             for j in range(versions_per_case):
                 version_number = j + 1
                 title_variation = f"{random.choice(scenario['titles'])} (v{version_number})"
                 precondition_variation = random.choice(scenario['preconditions'])
-                steps_variation = random.choice(scenario['steps'])
+                steps_variation_raw = random.choice(scenario['steps']) # 原始模板数据
+
+                # +++ 显式处理 steps_data +++
+                try:
+                    # 先 dump 成标准 JSON 字符串 (ensure_ascii=False 保留中文)
+                    steps_json_str = json.dumps(steps_variation_raw, ensure_ascii=False)
+                    # 再 load 回 Python 对象，确保结构和转义规范
+                    steps_variation_safe = json.loads(steps_json_str)
+                except (TypeError, json.JSONDecodeError) as e:
+                    self.stderr.write(self.style.ERROR(f"处理步骤数据时出错 (TC: {test_case.id}, V: {version_number}): {e}"))
+                    steps_variation_safe = [] # 如果处理失败，则使用空列表
+                # +++ 结束处理 +++
 
                 version = TestCaseVersion(
-                    test_case=test_case, # 直接关联已创建的 TestCase 对象
+                    test_case=test_case,
                     version_number=version_number,
                     title=title_variation,
                     precondition=precondition_variation,
-                    steps_data=steps_variation,
+                    steps_data=steps_variation_safe, # <-- 使用处理过的安全数据
                     priority=str(random.choice([p[0] for p in TestCase.PRIORITY_CHOICES])),
                     case_type=random.choice([t[0] for t in TestCase.TYPE_CHOICES]),
                     method=random.choice([m[0] for m in TestCase.METHOD_CHOICES]),
                     change_description=f"自动生成的版本 {version_number}",
                     creator_id=random.choice(user_ids),
-                    # embedding 和 embedding_model_version 默认为空
                 )
                 test_case_versions_to_create.append(version)
 
