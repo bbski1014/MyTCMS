@@ -1,9 +1,10 @@
 from celery import shared_task
 from apps.testcases.models import TestCaseVersion
-from .utils import generate_embedding, get_embedding_model, model_dimension, MODEL_NAME # 导入工具函数、模型维度和模型名称
+from .utils import generate_embedding, get_embedding_model, model_dimension, MODEL_NAME, extract_version_text # 导入工具函数、模型维度和模型名称
 import logging
 from .models import PotentialDuplicatePair # 导入结果模型
 from django.db import IntegrityError # 用于捕获唯一约束冲突
+from typing import List
 
 logger = logging.getLogger(__name__)
 
@@ -146,3 +147,99 @@ def find_and_store_duplicate_pairs_task(self, source_version_id: int, similarity
         logger.exception(f"Error in find_and_store_duplicate_pairs_task for source version {source_version_id}")
         # 发生意外错误时重试整个任务
         raise self.retry(exc=e) 
+
+# +++ 添加批量任务 +++
+@shared_task(bind=True, max_retries=2, default_retry_delay=120) # 批量任务重试次数和延迟可以调整
+def generate_embeddings_batch_task(self, version_ids: List[int]):
+    """
+    Celery 任务：为一批 TestCaseVersion 生成并批量保存 embedding。
+    """
+    model = get_embedding_model()
+    if not model:
+        logger.error("Embedding model not loaded. Retrying batch task later.")
+        # 增加重试延迟，因为模型加载可能是暂时性问题
+        raise self.retry(exc=RuntimeError("Embedding model not loaded"), countdown=300)
+
+    logger.info(f"Starting batch embedding generation for {len(version_ids)} versions...")
+
+    # 1. 批量查询版本对象
+    versions_to_process = list(TestCaseVersion.objects.filter(pk__in=version_ids))
+    if not versions_to_process:
+        logger.warning("No valid versions found for the provided IDs in this batch.")
+        return "No valid versions found in batch."
+
+    # 2. 提取文本并准备批次
+    texts_to_encode = []
+    valid_versions_map = {} # 使用字典方便后续匹配 embedding 和 version
+    original_order_versions = [] # 保持原始顺序以匹配 encode 输出
+
+    for version in versions_to_process:
+        text = extract_version_text(version) # 调用 utils 中的函数
+        if text:
+            texts_to_encode.append(text)
+            valid_versions_map[version.pk] = version # 存储有效版本
+            original_order_versions.append(version) # 按顺序存储
+        else:
+            logger.warning(f"No text content found for TestCaseVersion {version.id} in batch.")
+            # 对于没有文本的，可以考虑清除其 embedding 或标记
+            # version.embedding = None
+            # version.embedding_model_version = None
+            # version.save(update_fields=['embedding', 'embedding_model_version'])
+
+    if not texts_to_encode:
+        logger.info("No text content found for any version in this batch.")
+        return "No text content found in batch."
+
+    # 3. 批量生成 Embeddings
+    try:
+        logger.info(f"Encoding {len(texts_to_encode)} texts in batch...")
+        embeddings_np = model.encode(texts_to_encode, batch_size=32) # batch_size 可调
+        embeddings_list = embeddings_np.tolist()
+        logger.info(f"Successfully encoded {len(embeddings_list)} texts.")
+    except Exception as e:
+        logger.error(f"Error during batch encoding: {e}")
+        # 编码失败可能需要重试整个批次
+        raise self.retry(exc=e)
+
+    # 4. 准备批量更新
+    versions_to_update = []
+    if len(embeddings_list) == len(original_order_versions):
+        for version, embedding in zip(original_order_versions, embeddings_list):
+             if len(embedding) == model_dimension:
+                 version.embedding = embedding
+                 version.embedding_model_version = MODEL_NAME
+                 versions_to_update.append(version)
+             else:
+                 logger.error(f"Dimension mismatch for Version {version.id} in batch processing. Expected {model_dimension}, got {len(embedding)}.")
+                 # 可以在这里决定是否单独处理错误，或标记该版本
+    else:
+         logger.error(f"Mismatch between number of encoded texts ({len(embeddings_list)}) and number of versions with text ({len(original_order_versions)}). Skipping update for this batch.")
+         # 这是一个严重错误，可能需要调查原因
+         return "Error: Mismatch in embedding results count."
+
+
+    # 5. 执行批量更新
+    if versions_to_update:
+        try:
+            updated_count = TestCaseVersion.objects.bulk_update(
+                versions_to_update,
+                fields=['embedding', 'embedding_model_version']
+            )
+            logger.info(f"Successfully bulk updated embeddings for {updated_count} versions.")
+            return f"Batch processed. Updated embeddings for {updated_count} versions using model {MODEL_NAME}."
+        except Exception as e:
+            logger.error(f"Error during bulk update: {e}")
+            # 批量更新失败可能比较复杂，重试可能不是最佳选择
+            # 可以考虑改为单个更新或者记录失败的 IDs
+            # raise self.retry(exc=e) # 谨慎重试 bulk_update
+            return f"Error during bulk update for batch starting with version ID {version_ids[0]}."
+    else:
+        logger.info("No versions were prepared for bulk update in this batch (possibly due to dimension mismatches or empty text).")
+        return "No versions updated in this batch."
+# +++ 结束添加批量任务 +++
+
+# @shared_task
+# def find_duplicate_versions_task(project_id):
+#     ... 
+
+# ... (find_and_store_duplicate_pairs_task definition) ... 
