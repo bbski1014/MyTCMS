@@ -5,19 +5,18 @@ from django.core.management.base import BaseCommand
 from django.db.models import Q
 from apps.testcases.models import TestCaseVersion
 # 导入批量 Celery 任务
-# from apps.analysis.tasks import generate_embeddings_batch_task # Commented out
+from apps.analysis.tasks import generate_embeddings_batch_task # Uncommented original import
 
-# +++ 添加调试代码 +++
-print("Attempting basic import from tasks...")
-try:
-    from apps.analysis.tasks import generate_version_embedding_task # Known existing task
-    print("Successfully imported generate_version_embedding_task.")
-    import apps.analysis.tasks
-    print("Attributes found in tasks.py:", dir(apps.analysis.tasks))
-except ImportError as e:
-    print(f"Basic import failed: {e}")
-# from apps.analysis.tasks import generate_embeddings_batch_task # Keep commented out
-# +++ 结束调试代码 +++
+# --- 移除调试代码 ---
+# print("Attempting basic import from tasks...")
+# try:
+#     from apps.analysis.tasks import generate_version_embedding_task # Known existing task
+#     print("Successfully imported generate_version_embedding_task.")
+#     import apps.analysis.tasks
+#     print("Attributes found in tasks.py:", dir(apps.analysis.tasks))
+# except ImportError as e:
+#     print(f"Basic import failed: {e}")
+# --- 结束移除调试代码 ---
 
 from logging import getLogger
 from itertools import islice # 用于批处理迭代
