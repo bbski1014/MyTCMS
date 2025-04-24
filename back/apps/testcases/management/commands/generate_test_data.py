@@ -89,24 +89,41 @@ class Command(BaseCommand):
         if num_cases <= 0 or versions_per_case <= 0:
             raise CommandError("TestCase 数量和每个用例的版本数量必须大于 0。")
 
-        # --- 1. 查询有效的依赖 ID ---
+        # --- 1. 查询有效的依赖 ID (用户) ---
         user_ids = list(User.objects.values_list('id', flat=True))
         if not user_ids:
-            raise CommandError("数据库中没有用户。请先创建用户。")
+            raise CommandError("数据库中没有用户。请先通过 'python manage.py createsuperuser' 创建用户。")
+        first_user_id = user_ids[0] # 获取第一个用户 ID 用于创建默认项目
 
-        # --- 1a. 查询项目 ID ---
+        # --- 1a. 查询或创建项目 ID ---
         if project_id_arg:
-            # 检查指定项目是否存在
+            # 用户指定了项目 ID
             if not Project.objects.filter(pk=project_id_arg).exists():
                 raise CommandError(f"找不到指定的项目 ID: {project_id_arg}。")
-            project_ids_to_process = [project_id_arg] # 只处理指定的项目ID
+            project_ids_to_process = [project_id_arg]
+            self.stdout.write(f"将在指定的项目 ID {project_id_arg} 中创建数据...")
         else:
-            # 获取所有项目 ID
-            project_ids_to_process = list(Project.objects.values_list('id', flat=True))
-            if not project_ids_to_process:
-                raise CommandError("数据库中没有项目。请先创建项目或使用 --project-id 指定。")
-
-        self.stdout.write(f"将在 {len(project_ids_to_process)} 个项目中创建数据...")
+            # 用户未指定项目 ID，检查是否存在项目
+            existing_project_ids = list(Project.objects.values_list('id', flat=True))
+            if not existing_project_ids:
+                # 没有项目，自动创建一个默认项目
+                self.stdout.write(self.style.WARNING("数据库中没有项目，将自动创建一个默认项目..."))
+                try:
+                    # 假设 Project 模型有一个 owner 字段关联到 User
+                    default_project = Project.objects.create(
+                        name="默认测试项目",
+                        # 你可能需要根据你的 Project 模型调整这里的字段，比如 owner_id 或 created_by_id
+                        # 这里假设用第一个用户作为 owner
+                        owner_id=first_user_id
+                    )
+                    project_ids_to_process = [default_project.id]
+                    self.stdout.write(self.style.SUCCESS(f"已创建默认项目 ID: {default_project.id}。"))
+                except Exception as e:
+                     raise CommandError(f"自动创建默认项目时出错: {e}。请检查 Project 模型的必填字段。")
+            else:
+                # 已有项目，使用所有现有项目
+                project_ids_to_process = existing_project_ids
+                self.stdout.write(f"将在 {len(project_ids_to_process)} 个现有项目中随机创建数据...")
 
         # +++ 1b. 为每个项目批量生成常用模块 (忽略冲突) +++
         self.stdout.write("正在为项目创建/确保常用模块存在...")
