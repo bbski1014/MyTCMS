@@ -1,6 +1,7 @@
 from django.db import models
 from django.conf import settings
 from django.utils.translation import gettext_lazy as _
+from pgvector.django import VectorField # 导入 VectorField
 
 # Ensure the Project model path is correct based on your app structure
 # If your project app is named differently, adjust 'projects.Project' accordingly.
@@ -175,6 +176,21 @@ class TestCaseVersion(models.Model):
     # (Would need a consistent format, e.g., Markdown, for parsing/display)
     # Let's start with JSONField as it's more structured.
     # --- End Store Steps ---
+
+    # --- 新增 Embedding 字段 ---
+    embedding = VectorField(
+        dimensions=768,  # 必须与 paraphrase-multilingual-mpnet-base-v2 模型输出维度一致
+        null=True,       # 允许为空，因为生成可能需要时间或失败
+        blank=True,
+        verbose_name="语义向量"
+    )
+    embedding_model_version = models.CharField(
+        max_length=100, # 足够存储模型名称和版本号
+        null=True,
+        blank=True,
+        verbose_name="嵌入模型版本" # 记录生成此向量的模型信息
+    )
+    # --- 结束新增字段 ---
 
     # --- Version Metadata ---
     change_description = models.TextField(_('版本变更说明'), blank=True) # Reason for this version

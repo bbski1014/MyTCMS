@@ -3,6 +3,8 @@ from apps.testcases.models import TestCaseVersion
 import numpy as np
 import logging
 from typing import Optional, List
+from pgvector.django import CosineDistance
+from django.db import models
 
 logger = logging.getLogger(__name__)
 
@@ -75,4 +77,64 @@ def generate_embedding(version: TestCaseVersion) -> Optional[List[float]]:
         return embedding_vector_list
     except Exception as e:
         logger.error(f"Error generating embedding for TestCaseVersion {version.id}: {e}")
-        return None 
+        return None
+
+def find_similar_testcases(
+    source_version_id: int,
+    limit: int = 10,
+    similarity_threshold: float = 0.90
+) -> models.QuerySet[TestCaseVersion]:
+    """
+    查找与给定的 TestCaseVersion 语义相似的其他用例版本。
+
+    Args:
+        source_version_id: 源 TestCaseVersion 的 ID.
+        limit: 最多返回多少个相似用例版本。
+        similarity_threshold: 余弦相似度阈值 (值越高越相似, 1 为完全相同)。
+                              对应数据库查询的距离阈值为 1 - similarity_threshold。
+
+    Returns:
+        一个包含相似 TestCaseVersion 对象的 QuerySet，按相似度（距离）排序。
+        如果源版本不存在或没有 embedding，则返回空的 QuerySet。
+    """
+    try:
+        source_version = TestCaseVersion.objects.get(pk=source_version_id)
+    except TestCaseVersion.DoesNotExist:
+        logger.error(f"Source TestCaseVersion {source_version_id} not found for similarity search.")
+        return TestCaseVersion.objects.none() # 返回空 QuerySet
+
+    if source_version.embedding is None:
+        logger.warning(f"Source TestCaseVersion {source_version_id} does not have an embedding. Cannot perform similarity search.")
+        return TestCaseVersion.objects.none()
+
+    # 计算距离阈值 (pgvector 使用距离，0表示完全相同，值越小越相似)
+    distance_threshold = 1.0 - similarity_threshold
+
+    # 执行向量相似度查询
+    # 使用 l2_distance, max_inner_product, or cosine_distance
+    # cosine_distance 范围 0 到 2 (0 最相似)
+    # 确保查询的字段是 'embedding'，并且与 source_version.embedding 比较
+    similar_versions = TestCaseVersion.objects \
+        .exclude(pk=source_version_id) \
+        .filter(embedding__isnull=False) \
+        .annotate(distance=CosineDistance('embedding', source_version.embedding)) \
+        .filter(distance__lt=distance_threshold) \
+        .order_by('distance')[:limit]
+
+    count = similar_versions.count() # 获取实际找到的数量
+    if count > 0:
+         logger.info(f"Found {count} similar versions for Version {source_version_id} (threshold={similarity_threshold}, distance < {distance_threshold:.4f}).")
+    # else:
+    #      logger.info(f"No similar versions found for Version {source_version_id} above threshold {similarity_threshold}.")
+
+
+    return similar_versions
+
+# --- 使用示例 ---
+# 在 Django shell 或视图/任务中:
+# from apps.analysis.utils import find_similar_testcases
+# potential_duplicates = find_similar_testcases(source_version_id=123, similarity_threshold=0.92, limit=5)
+# for version in potential_duplicates:
+#     # 注意这里的 version.distance 是 pgvector 计算出的距离，不是相似度
+#     similarity = 1.0 - version.distance
+#     print(f"Potential duplicate: ID={version.pk}, Title={version.title}, Distance={version.distance:.4f}, Similarity={similarity:.4f}") 

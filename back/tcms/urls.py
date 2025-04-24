@@ -63,6 +63,8 @@ urlpatterns = [
         path('files/', include('apps.files.urls')),
         # 执行管理
         path('executions/', include('apps.executions.urls')),
+        # 添加 Analysis 应用的 URL
+        path('analysis/', include('apps.analysis.urls')),
     ])),
 ]
 
