@@ -2,6 +2,7 @@
 
 import random
 import time
+import datetime
 from django.core.management.base import BaseCommand, CommandError
 from django.contrib.auth import get_user_model
 from django.db import transaction, IntegrityError # Import IntegrityError
@@ -109,12 +110,17 @@ class Command(BaseCommand):
                 # 没有项目，自动创建一个默认项目
                 self.stdout.write(self.style.WARNING("数据库中没有项目，将自动创建一个默认项目..."))
                 try:
-                    # 假设 Project 模型有一个 owner 字段关联到 User
+                    # 使用正确的 'creator_id' 字段
                     default_project = Project.objects.create(
                         name="默认测试项目",
-                        # 你可能需要根据你的 Project 模型调整这里的字段，比如 owner_id 或 created_by_id
-                        # 这里假设用第一个用户作为 owner
-                        owner_id=first_user_id
+                        # 使用 creator_id 关联第一个用户
+                        creator_id=first_user_id,
+                        # 需要提供 Project 模型中其他必填字段的默认值
+                        # 假设 start_date 是必填的
+                        start_date=datetime.date.today(), # 使用当前日期作为开始日期
+                        # 假设 code 是必填且唯一的
+                        code=f"DEFAULT_{int(time.time())}", # 生成一个基于时间的唯一代号
+                        # 根据你的 Project 模型，可能还需要其他必填字段
                     )
                     project_ids_to_process = [default_project.id]
                     self.stdout.write(self.style.SUCCESS(f"已创建默认项目 ID: {default_project.id}。"))
