@@ -16,15 +16,10 @@ class Migration(migrations.Migration):
             model_name='testcaseversion',
             # 将 HnswIndex 实例作为 index 参数传递
             index=HnswIndex(
-                # 索引名称
-                name='testcaseversion_embedding_hnsw_idx',
-                # 使用 'fields' 参数，值为一个列表
+                name='tcversion_emb_hnsw_idx',
                 fields=['embedding'],
-                # HNSW 参数 M
                 m=16,
-                # HNSW 参数 ef_construction
                 ef_construction=64,
-                # 操作符类: 余弦距离
                 opclasses=['vector_cosine_ops'],
             ),
         ),

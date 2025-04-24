@@ -1,7 +1,7 @@
 from django.db import models
 from django.conf import settings
 from django.utils.translation import gettext_lazy as _
-from pgvector.django import VectorField # 导入 VectorField
+from pgvector.django import VectorField, HnswIndex # 导入 VectorField 和 HnswIndex
 
 # Ensure the Project model path is correct based on your app structure
 # If your project app is named differently, adjust 'projects.Project' accordingly.
@@ -211,6 +211,17 @@ class TestCaseVersion(models.Model):
         # Ensure unique version per test case
         unique_together = ('test_case', 'version_number')
         ordering = ['test_case', '-version_number'] # Show latest version first for a case
+        # +++ 在 Meta 中添加索引定义 +++
+        indexes = [
+            HnswIndex(
+                name='tcversion_emb_hnsw_idx', # <-- 使用缩短的名称
+                fields=['embedding'],
+                m=16,
+                ef_construction=64,
+                opclasses=['vector_cosine_ops'],
+            )
+        ]
+        # +++ 结束添加索引定义 +++
 
     def __str__(self):
         return f"{self.test_case.title} - v{self.version_number}"
